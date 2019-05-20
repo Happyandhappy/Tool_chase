@@ -5,6 +5,13 @@ require_once('config.php');
 
 $msg = "";
 
+// Checke User logged in status
+if (isset($_SESSION['LoggedIn'])) {
+    header('Location: main.php');
+    exit();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if ($user == $_POST['UserName'] and $pass == $_POST['Password']){
         $_SESSION['LoggedIn'] = true;
@@ -13,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     }
     $msg = "Invalid Credentials.";
 }
-session_destroy();
+
 
 ?>
 <!DOCTYPE html>

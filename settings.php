@@ -16,6 +16,9 @@
         if ($msg == ""){
             $msg = "Successfully Submitted.";
             $msg_kind = "alert-success";
+
+            header('Location: main.php');
+            exit();
         }
     }    
 ?>
