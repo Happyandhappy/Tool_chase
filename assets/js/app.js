@@ -231,7 +231,11 @@ $(function(){
     App.init();
     $('#import_button').click(function(){
         notified = false;
-        csv_data = shuffle(csv_data);
+        if (csv_data.length === 0) {
+            showNotification('alert-danger', "Please import file first.", "top", "center", "", "animated fadeOutRight");
+            return;
+        }
+        csv_data = shuffle(csv_data);        
         countA = Math.floor(csv_data.length * $('input[name=Rate_A]').val()/100);
         countB = csv_data.length - countA;
         currentNum = 0;

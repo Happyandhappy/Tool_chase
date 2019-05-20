@@ -6,11 +6,12 @@
 
 	switch ($action) {
 		case 'settings':
+			if ($_POST['Rate_A'] + $_POST['Rate_B'] > 100) errorMessage("Rates cant be over 100");
 			foreach ($names as $name) {
             	if (!setValue($_POST,$name)){
-	                errorMessage($name . " is missing.");	                
+	                errorMessage($name . " is missing.");
             	}
-        	}
+        	}        	
         	echo json_encode(array("status" => "success", "data" => $_POST));
 			break;
 		case 'upload':

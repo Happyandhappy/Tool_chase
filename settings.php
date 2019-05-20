@@ -1,24 +1,30 @@
 <?php
     $page = "Cred";
-	require_once('utils.php');    
+	require_once('utils.php');
 
     $msg = "";
     $msg_kind = "";
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-        foreach ($names as $name) {
-            if (!setValue($_POST,$name)){
-                $msg = str_replace("_", " of ", $name) . " is missing.";
-                $msg_kind = "alert-danger";
-                break;
+        
+        if ($_POST['Rate_A'] + $_POST['Rate_B'] > 100) {
+            $msg = "Rates cant be over 100";
+            $msg_kind = "alert-danger";
+        }else{
+            foreach ($names as $name) {
+                if (!setValue($_POST,$name)){
+                    $msg = str_replace("_", " of ", $name) . " is missing.";
+                    $msg_kind = "alert-danger";
+                    break;
+                }
             }
-        }
 
-        if ($msg == ""){
-            $msg = "Successfully Submitted.";
-            $msg_kind = "alert-success";
+            if ($msg == ""){
+                $msg = "Successfully Submitted.";
+                $msg_kind = "alert-success";
 
-            header('Location: main.php');
-            exit();
+                header('Location: main.php');
+                exit();
+            }
         }
     }    
 ?>
@@ -44,7 +50,7 @@
 
                                     <div class="col-sm-6">
                                         <div class="col-sm-10 col-sm-offset-1">
-                                            <h4 class="m-b-20">System A</h4>                                            
+                                            <h4 class="m-b-20">System A</h4>
 
                                             <!-- GroupId A -->
                                             <div class="form-group form-float">
@@ -59,7 +65,7 @@
                                             <!-- Security Code A -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" name="SecurityCode_A"  
+                                                    <input type="text" class="form-control" name="SecurityCode_A"
                                                     value="<?php echo getValue($_SESSION, 'SecurityCode_A') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Security Code</label>
@@ -79,7 +85,7 @@
                                             <!-- Subcampaign A -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" name="Subcampaign_A" 
+                                                    <input type="text" class="form-control" name="Subcampaign_A"
                                                     value="<?php echo getValue($_SESSION, 'Subcampaign_A') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Subcampaign</label>
@@ -89,7 +95,7 @@
                                             <!-- Rate A -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="number" class="form-control" name="Rate_A" 
+                                                    <input type="number" class="form-control" name="Rate_A"
                                                     value="<?php echo getValue($_SESSION, 'Rate_A') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Percentage</label>
@@ -106,7 +112,7 @@
                                             <!-- GroupId B -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" name="GroupId_B"  
+                                                    <input type="text" class="form-control" name="GroupId_B"
                                                     value="<?php echo getValue($_SESSION, 'GroupId_B') ?>" 
                                                     required=""  autofocus=""  aria-required="true">
                                                     <label class="form-label">Group Id</label>
@@ -116,7 +122,7 @@
                                             <!-- Security Code B -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" name="SecurityCode_B" 
+                                                    <input type="text" class="form-control" name="SecurityCode_B"
                                                     value="<?php echo getValue($_SESSION, 'SecurityCode_B') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Security Code</label>
@@ -126,7 +132,7 @@
                                             <!-- Campaign B -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" name="Campaign_B" 
+                                                    <input type="text" class="form-control" name="Campaign_B"
                                                     value="<?php echo getValue($_SESSION, 'Campaign_B') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Campaign</label>
@@ -136,7 +142,7 @@
                                             <!-- Subcampaign B -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" name="Subcampaign_B" 
+                                                    <input type="text" class="form-control" name="Subcampaign_B"
                                                     value="<?php echo getValue($_SESSION, 'Subcampaign_B') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Subcampaign</label>
@@ -146,7 +152,7 @@
                                             <!-- Rate B -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
-                                                    <input type="number" class="form-control" name="Rate_B"  
+                                                    <input type="number" class="form-control" name="Rate_B"
                                                     value="<?php echo getValue($_SESSION, 'Rate_B') ?>"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Percentage</label>

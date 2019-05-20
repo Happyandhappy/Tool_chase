@@ -69,3 +69,7 @@ section.content{
     position: relative;
     top: calc(50% - 30px);
 }
+/*bootstrap-notify-container alert alert-dismissible alert-danger p-r-35 animated fadeInDown*/
+.bootstrap-notify-container{
+    z-index: 1051!important;
+}
