@@ -20,19 +20,41 @@ function AjaxRequest(data){
     });
 }
 
-function getRandomInt() {    
+function getRandomInt() {
     return Math.random();
 }
 
 var App = function(){
     var dataTable;
 
+    var initTableHeader= function(arr){
+        dataTable.clear();
+        dataTable.destroy();
+        var html = "<tr><th>#</th>";
+        for (var i = 0 ;  i < arr.length ; i++){
+            html += "<th>" + arr[i] + "</th>";
+        }
+        $('#dataTable thead').html(html);
+
+        dataTable = $('#dataTable').DataTable({
+            responsive: true,
+        });
+    }
+
     var initCSVTable = function(_data){
         var data = [];
+        var array_keys= [], array_values= [];
 
         for (i = 0; i < _data.length; i++){
-            data.push([i, _data[i].LastName, _data[i].FirstName, _data[i].PrimaryPhone, _data[i].Address, _data[i].City, _data[i].State, _data[i].ZipCode ])
+            array_keys= [];
+            array_values = [i+1];
+            for (var key in _data[i]) {
+                array_keys.push(key);
+                array_values.push(_data[i][key]);
+            }
+            data.push(array_values);
         }
+        initTableHeader(array_keys);
 
         dataTable.clear();
         dataTable.rows.add(data);
@@ -42,18 +64,18 @@ var App = function(){
     var initSettingTable = function(_data){
         var i, html = "";
         html += "<tr>";
-        html += "<td>A</td>";
-        html += "<td>" + _data['GroupId_A'] + "</td>";
-        html += "<td>" + _data['SecurityCode_A'] + "</td>";
+        html += "<td>BT07.chasedatacorp.com</td>";
+        // html += "<td>" + _data['GroupId_A'] + "</td>";
+        // html += "<td>" + _data['SecurityCode_A'] + "</td>";
         html += "<td>" + _data['Campaign_A'] + "</td>";
         html += "<td>" + _data['Subcampaign_A'] + "</td>";
         html += "<td>" + _data['Rate_A'] + "</td>";
         html += "</tr>";
 
         html += "<tr>";
-        html += "<td>B</td>";
-        html += "<td>" + _data['GroupId_B'] + "</td>";
-        html += "<td>" + _data['SecurityCode_B'] + "</td>";
+        html += "<td>BT15.chasedatacorp.com</td>";
+        // html += "<td>" + _data['GroupId_B'] + "</td>";
+        // html += "<td>" + _data['SecurityCode_B'] + "</td>";
         html += "<td>" + _data['Campaign_B'] + "</td>";
         html += "<td>" + _data['Subcampaign_B'] + "</td>";
         html += "<td>" + _data['Rate_B'] + "</td>";
@@ -78,8 +100,8 @@ var App = function(){
         var data = JSON.parse(res);
         if (data.status === 'success'){
             csv_data = data.data;
-            csv_data.shift();
-            initCSVTable(csv_data, dataTable);            
+            // csv_data.shift();
+            initCSVTable(csv_data, dataTable);
             hideSpinner('uploading_spinner');
             showNotification('alert-success', 'Successfully Uploaded.', "top", "center", "", "animated fadeOutRight");
         }else{
@@ -135,7 +157,7 @@ var App = function(){
             }
         });
 
-        dataTable = $('.dataTable').DataTable({
+        dataTable = $('#dataTable').DataTable({
             responsive: true,
         });
 
@@ -171,7 +193,7 @@ var App = function(){
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
-    // While there remain elements to shuffle...
+    // While there remain elements to shuffle
     while (0 !== currentIndex) {
 
         // Pick a remaining element...
@@ -187,7 +209,7 @@ function shuffle(array) {
 }
 
 function FuncUnit(type){
-    console.log(type);
+    // console.log(type);
     if ( type === 'A' && countA > 0)        countA--;
     else if( type === 'B' && countB > 0)    countB--;
     else {
@@ -201,11 +223,11 @@ function FuncUnit(type){
 
     row = csv_data[currentNum++];
     row['action']       = 'import';
-    row['GroupId']      = $('input[name=GroupId_'       + type + ']').val();
-    row['SecurityCode'] = $('input[name=SecurityCode_'  + type + ']').val();
+    row['type']         = type;
     row['Campaign']     = $('input[name=Campaign_'      + type + ']').val();
     row['Subcampaign']  = $('input[name=Subcampaign_'   + type + ']').val();
 
+    console.log(row['PrimaryPhone'] + ':' + row['Campaign']);
 
     var formData = new FormData();
     for(p in row) {
@@ -216,10 +238,11 @@ function FuncUnit(type){
         url : 'Controller.php',
         method  : 'POST',
         data    : formData,
-        success : function(res){
-            setTimeout(function(){
-                FuncUnit(type);
-            }, getRandomInt*2000); 
+        success : function(res){            
+                    FuncUnit(type);            
+                },
+        error: function(err){
+            console.log(err);
         },
         processData: false,
         contentType: false,
@@ -240,7 +263,30 @@ $(function(){
         countB = csv_data.length - countA;
         currentNum = 0;
         $('.page-loader').css('display', 'block');
-        FuncUnit('A');
-        FuncUnit('B');
+        for (i = 0 ; i < 50 ; i++){
+            FuncUnit('A');
+            FuncUnit('B');
+        }
+    });
+
+
+    $('.percentage').change(function(){
+        var val, name = $(this).attr('name');
+        val = $(this).val();
+
+        if (name === 'Rate_A'){            
+            $('input[name=Rate_B]').val( 100 - val );
+        }else{
+            $('input[name=Rate_A]').val( 100 - val );
+        }        
+    });
+
+
+    setInputFilter(document.getElementById("Rate_A"), function(value) {
+        return /^\d*$/.test(value) && (value === "" || (parseInt(value) <= 100 && parseInt(value) > -1));
+    });
+
+    setInputFilter(document.getElementById("Rate_B"), function(value) {
+        return /^\d*$/.test(value) && (value === "" || (parseInt(value) <= 100 && parseInt(value) > -1));
     });
 });

@@ -50,33 +50,14 @@
 
                                     <div class="col-sm-6">
                                         <div class="col-sm-10 col-sm-offset-1">
-                                            <h4 class="m-b-20">System A</h4>
-
-                                            <!-- GroupId A -->
-                                            <div class="form-group form-float">
-                                                <div class="form-line">
-                                                    <input type="text" class="form-control" name="GroupId_A" 
-                                                    value="<?php echo getValue($_SESSION, 'GroupId_A') ?>" 
-                                                    required=""  autofocus=""  aria-required="true">
-                                                    <label class="form-label">Group Id</label>
-                                                </div>
-                                            </div>
-
-                                            <!-- Security Code A -->
-                                            <div class="form-group form-float">
-                                                <div class="form-line">
-                                                    <input type="text" class="form-control" name="SecurityCode_A"
-                                                    value="<?php echo getValue($_SESSION, 'SecurityCode_A') ?>"
-                                                    required="" aria-required="true">
-                                                    <label class="form-label">Security Code</label>
-                                                </div>
-                                            </div>
+                                            <h4 class="m-b-20"><?php echo SYSTEM_A; ?></h4>
 
                                             <!-- Campaign A -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
                                                     <input type="text" class="form-control" name="Campaign_A" 
                                                     value="<?php echo getValue($_SESSION, 'Campaign_A') ?>"
+                                                    placeholder=" "
                                                     required="" aria-required="true">
                                                     <label class="form-label">Campaign</label>
                                                 </div>
@@ -87,16 +68,17 @@
                                                 <div class="form-line">
                                                     <input type="text" class="form-control" name="Subcampaign_A"
                                                     value="<?php echo getValue($_SESSION, 'Subcampaign_A') ?>"
-                                                    required="" aria-required="true">
+                                                    placeholder=" ">
                                                     <label class="form-label">Subcampaign</label>
                                                 </div>
                                             </div>
 
                                             <!-- Rate A -->
                                             <div class="form-group form-float">
-                                                <div class="form-line">
-                                                    <input type="number" class="form-control" name="Rate_A"
+                                                <div class="form-line focused">
+                                                    <input type="number" class="form-control percentage" name="Rate_A"
                                                     value="<?php echo getValue($_SESSION, 'Rate_A') ?>"
+                                                    max="100" placeholder=" " min="0" id="Rate_A"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Percentage</label>
                                                 </div>
@@ -107,33 +89,14 @@
 
                                     <div class="col-sm-6">
                                         <div class="col-sm-10 col-sm-offset-1">
-                                            <h4 class="m-b-20">System B</h4>
-
-                                            <!-- GroupId B -->
-                                            <div class="form-group form-float">
-                                                <div class="form-line">
-                                                    <input type="text" class="form-control" name="GroupId_B"
-                                                    value="<?php echo getValue($_SESSION, 'GroupId_B') ?>" 
-                                                    required=""  autofocus=""  aria-required="true">
-                                                    <label class="form-label">Group Id</label>
-                                                </div>
-                                            </div>
-
-                                            <!-- Security Code B -->
-                                            <div class="form-group form-float">
-                                                <div class="form-line">
-                                                    <input type="text" class="form-control" name="SecurityCode_B"
-                                                    value="<?php echo getValue($_SESSION, 'SecurityCode_B') ?>"
-                                                    required="" aria-required="true">
-                                                    <label class="form-label">Security Code</label>
-                                                </div>
-                                            </div>
+                                            <h4 class="m-b-20"><?php echo SYSTEM_B; ?></h4>
 
                                             <!-- Campaign B -->
                                             <div class="form-group form-float">
                                                 <div class="form-line">
                                                     <input type="text" class="form-control" name="Campaign_B"
                                                     value="<?php echo getValue($_SESSION, 'Campaign_B') ?>"
+                                                    placeholder=" "
                                                     required="" aria-required="true">
                                                     <label class="form-label">Campaign</label>
                                                 </div>
@@ -144,16 +107,17 @@
                                                 <div class="form-line">
                                                     <input type="text" class="form-control" name="Subcampaign_B"
                                                     value="<?php echo getValue($_SESSION, 'Subcampaign_B') ?>"
-                                                    required="" aria-required="true">
+                                                    placeholder=" ">
                                                     <label class="form-label">Subcampaign</label>
                                                 </div>
                                             </div>
 
                                             <!-- Rate B -->
                                             <div class="form-group form-float">
-                                                <div class="form-line">
-                                                    <input type="number" class="form-control" name="Rate_B"
+                                                <div class="form-line focused">
+                                                    <input type="number" class="form-control percentage" name="Rate_B"
                                                     value="<?php echo getValue($_SESSION, 'Rate_B') ?>"
+                                                    max="100" placeholder=" " min="0" id="Rate_B"
                                                     required="" aria-required="true">
                                                     <label class="form-label">Percentage</label>
                                                 </div>

@@ -1,4 +1,5 @@
 <?php
+	$page = "Controller";
 	require_once('utils.php');
 
 	if ($_SERVER['REQUEST_METHOD'] != 'POST') errorMessage('POST method only allowed');
@@ -21,9 +22,13 @@
 			break;
 
 		case 'import':
-			unset($_POST['action']);			
-			Import($_POST);
-			echo json_encode(array("status" => "success", "message" => "imported!"));
+			unset($_POST['action']);
+			$res = Import($_POST);
+			if (strpos($res, 'OK') > 0)
+				echo json_encode(array("status" => "success", "message" => 'Imported!'));
+			else if (strpos($res, 'Duplicated') > 0)
+				echo json_encode(array("status" => "success", "message" => 'Duplicated phone number!'));
+			else echo json_encode(array("status" => "success", "message" => $res));
 			break;
 		default:
 			errorMessage('action parameter is missing.');

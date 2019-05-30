@@ -3,15 +3,13 @@
 	session_start();
 
 	require_once('config.php');
+	require_once('PowerImportAPI.php');
+	
 
 	$names = [
-        'GroupId_A',
-        'SecurityCode_A',
         'Campaign_A',
         'Subcampaign_A',
         'Rate_A',
-        'GroupId_B',
-        'SecurityCode_B',
         'Campaign_B',
         'Subcampaign_B',
         'Rate_B',
@@ -27,7 +25,7 @@
 
 	// Check User set credentials status
 	foreach ($names as $name) {
-		if (getValue($_SESSION, $name) == '' and $page == 'Home'){
+		if (getValue($_SESSION, $name) == '' and $page == 'Home' and $name != 'Subcampaign_A' and $name != 'Subcampaign_B'){
 			header('Location: settings.php');
 			exit();
 		}	
@@ -83,7 +81,8 @@
 	function getContentFile($filename){
 		// The nested array to hold all the arrays
 		$data_array = [];
-
+		$header = [];
+		$first = true;
 		try{
 			// Open the file for reading
 			if (($h = fopen("{$filename}", "r")) !== FALSE) 
@@ -91,18 +90,19 @@
 			  	// Each line in the file is converted into an individual array that we call $data
 			  	// The items of the array are comma separated
 			  	while (($data = fgetcsv($h, 1000, ",")) !== FALSE) 
-			  	{
-			    	// Each individual array is being pushed into the nested array
-			    	$arr = array(
-			    		"LastName"		=> $data[0],
-			    		"FirstName"		=> $data[1],
-			    		"PrimaryPhone"	=> $data[2],
-			    		"Address"		=> $data[3],
-			    		"City"			=> $data[4],
-			    		"State"			=> $data[5],
-			    		"ZipCode"		=> $data[6],
-			    	);
-			    	$data_array[] = $arr;
+			  	{	
+			  		if ($first == true){
+			  			$first = false;
+			  			$header = $data;
+			  		}else{
+			  			$arr = [];
+			  			$index = 0;
+			  			foreach ($header as $key) {
+			  				$arr[$key] = $data[$index++];
+			  			}
+			  			// Each individual array is being pushed into the nested array
+				    	$data_array[] = $arr;
+			  		}			    	
 			  	}
 
 			  	// Close the file
@@ -117,7 +117,17 @@
 
 
 
-	function Import($data){	
+	function Import($data){
+		$type = $data['type'];
+		if ($type == 'A'){
+			$data['SecurityCode'] = SecurityCode_A;
+			$data['GroupId'] 	  = GroupID_A;
+		}else{
+			$data['SecurityCode'] = SecurityCode_B;
+			$data['GroupId'] 	  = GroupID_B;
+		}
+		
+		unset($data['type']);
 		$Url = "https://www.chasedatacorp.com/HttpImport/InjectLead.php?".http_build_query($data);
 		// echo $Url;
 		$ch = curl_init($Url);
