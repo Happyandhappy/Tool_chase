@@ -15,6 +15,8 @@
         'Rate_B',
     ];
 
+    $api1 = new PowerImportAPI("http://" . SYSTEM_A . "/PowerStudio/WebAPI");
+	$api2 = new PowerImportAPI("http://" . SYSTEM_B . "/PowerStudio/WebAPI");
 
     // Checke User logged in status
 	if (!isset($_SESSION['LoggedIn'])) {
@@ -118,23 +120,33 @@
 
 
 	function Import($data){
+		// initialize variables
+		$dialDups = 0;
+		$dialNonCallables = 0;
+		$duplicatesCheck = 2;
+
 		$type = $data['type'];
-		if ($type == 'A'){
-			$data['SecurityCode'] = SecurityCode_A;
-			$data['GroupId'] 	  = GroupID_A;
-		}else{
-			$data['SecurityCode'] = SecurityCode_B;
-			$data['GroupId'] 	  = GroupID_B;
-		}
-		
 		unset($data['type']);
-		$Url = "https://www.chasedatacorp.com/HttpImport/InjectLead.php?".http_build_query($data);
-		// echo $Url;
-		$ch = curl_init($Url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		$res = curl_exec($ch);
-		curl_close($ch);
-		return $res;
+		if ($type == 'A'){
+			$api =  $GLOBALS['api1'];
+			$data['SecurityCode'] = SecurityCode_A;
+			$GroupId 	  = GroupID_A;
+		}else{
+			$api =  $GLOBALS['api2'];
+			$data['SecurityCode'] = SecurityCode_B;
+			$GroupId	  = GroupID_B;
+		}
+
+		$subcampaign = $data['Subcampaign'];unset($data['Subcampaign']);
+		$campaign    = $data['Campaign'];   unset($data['Campaign']);
+
+
+		$result = $api->ImportData($data, $GroupId, $campaign, $subcampaign, $dialDups, $dialNonCallables, $duplicatesCheck);
+		if(!$result)
+			$result = $api->GetLastError();
+		else
+			$result = " OK";
+
+		echo $result;
 	}
 ?>

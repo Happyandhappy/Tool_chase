@@ -23,12 +23,19 @@
 
 		case 'import':
 			unset($_POST['action']);
-			$res = Import($_POST);
+			$data = json_decode($_POST['data']);
+
+			foreach ($data as $row) {
+				$res = Import((array)$row);
+			}
+
+			/*$res = Import($_POST);
 			if (strpos($res, 'OK') > 0)
 				echo json_encode(array("status" => "success", "message" => 'Imported!'));
 			else if (strpos($res, 'Duplicated') > 0)
 				echo json_encode(array("status" => "success", "message" => 'Duplicated phone number!'));
-			else echo json_encode(array("status" => "success", "message" => $res));
+			else echo json_encode(array("status" => "success", "message" => $res));			
+			*/
 			break;
 		default:
 			errorMessage('action parameter is missing.');

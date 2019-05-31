@@ -1,6 +1,7 @@
-var csv_data=[];
+var csv_data_A=[], csv_data_B = [], csv_data = [];
 var dataTable ;
-var countA, countB, currentNum, notified;
+var countA, countB, notified_A, notified_B, notified;
+var Unit = 1000;
 
 function AjaxRequest(data){
     return new Promise((resolve, reject) => {
@@ -99,7 +100,7 @@ var App = function(){
         var res = await AjaxRequest(formData);
         var data = JSON.parse(res);
         if (data.status === 'success'){
-            csv_data = data.data;
+            csv_data = data.data;            
             // csv_data.shift();
             initCSVTable(csv_data, dataTable);
             hideSpinner('uploading_spinner');
@@ -208,64 +209,141 @@ function shuffle(array) {
   return array;
 }
 
-function FuncUnit(type){
-    // console.log(type);
-    if ( type === 'A' && countA > 0)        countA--;
-    else if( type === 'B' && countB > 0)    countB--;
-    else {
-        if (countA ===0 && countB===0 && notified === false){
-            notified = true;
-            $('.page-loader').css('display', 'none');
-            showNotification('alert-success', 'Successfully all leads Importted.', "top", "center", "", "animated fadeOutRight");
-        }        
-        return;
+// Import lead to Campagin A
+function FuncUnitA(from, to){
+    console.log(from + ":" + to);
+    var i, formDt = [];
+    
+    for ( i = from ; i < to; i++){
+        row = csv_data_A[i];
+        row['type']         = 'A';
+        row['Campaign']     = $('input[name=Campaign_A]').val();
+        row['Subcampaign']  = $('input[name=Subcampaign_A]').val();
+        formDt.push(row);
     }
 
-    row = csv_data[currentNum++];
-    row['action']       = 'import';
-    row['type']         = type;
-    row['Campaign']     = $('input[name=Campaign_'      + type + ']').val();
-    row['Subcampaign']  = $('input[name=Subcampaign_'   + type + ']').val();
-
-    console.log(row['PrimaryPhone'] + ':' + row['Campaign']);
-
-    var formData = new FormData();
-    for(p in row) {
-        formData.append(p, row[p]);
-    }
     
     $.ajax({
         url : 'Controller.php',
         method  : 'POST',
-        data    : formData,
-        success : function(res){            
-                    FuncUnit(type);            
-                },
-        error: function(err){
-            console.log(err);
+        data    : { action : 'import', data: JSON.stringify(formDt)},
+        success : function(res){
+
+
+            // importing Campagin A
+            if (countA === 0) notified_A = true;
+            else if (countA > Unit){
+                countA = countA - Unit;
+                FuncUnitA(to, to + Unit);
+            }else{
+                end = to + countA;
+                countA = 0;
+                FuncUnitA(to, end);
+            }
+
+            if (notified_A && notified_B && !notified){
+                notified = true;
+                $('.page-loader').css('display', 'none');
+                showNotification('alert-success', 'Successfully all leads Importted.', "top", "center", "", "animated fadeOutRight");
+            }
+            console.log(res);
         },
-        processData: false,
-        contentType: false,
-    });    
+        error: function(err){
+            $('.page-loader').css('display', 'none');
+            showNotification('alert-danger', err, "top", "center", "", "animated fadeOutRight");
+            console.log(err);
+        }
+    });
+}
+
+// Import lead to Campagin B
+function FuncUnitB( from, to){
+    console.log(from + ":" + to);
+    var i, formDt = [];
+
+    for ( i = from ; i < to; i++){
+        row = csv_data_B[i];
+        row['type']         = 'B';
+        row['Campaign']     = $('input[name=Campaign_B]').val();
+        row['Subcampaign']  = $('input[name=Subcampaign_B]').val();
+        formDt.push(row);
+    }
+
+    
+    $.ajax({
+        url : 'Controller.php',
+        method  : 'POST',
+        data    : { action : 'import', data: JSON.stringify(formDt)},
+        success : function(res){
+
+
+            // importing Campagin B
+            if (countB === 0) notified_B = true;
+            else if (countB > Unit){
+                countB = countB - Unit;
+                FuncUnitB(to, to + Unit);
+            }else{
+                end = to + countB;
+                countB = 0;
+                FuncUnitB(to, end);
+            }
+
+            if (notified_A && notified_B && !notified){
+                $('.page-loader').css('display', 'none');
+                showNotification('alert-success', 'Successfully all leads Importted.', "top", "center", "", "animated fadeOutRight");
+            }
+            console.log(res);
+        },
+        error: function(err){
+            $('.page-loader').css('display', 'none');
+            showNotification('alert-danger', err, "top", "center", "", "animated fadeOutRight");
+            console.log(err);
+        }
+    });
 }
 
 
 $(function(){
     App.init();
     $('#import_button').click(function(){
-        notified = false;
+        notified = false, notified_B = false, notified_A = false;
+
         if (csv_data.length === 0) {
             showNotification('alert-danger', "Please import file first.", "top", "center", "", "animated fadeOutRight");
             return;
         }
-        csv_data = shuffle(csv_data);        
+
+        // prepare array data and split it to 2 arrays for A and B
+        csv_data = shuffle(csv_data);
         countA = Math.floor(csv_data.length * $('input[name=Rate_A]').val()/100);
-        countB = csv_data.length - countA;
-        currentNum = 0;
+        csv_dt = [];
+        csv_data.forEach(function(value){
+            csv_dt.push(value);
+        });
+        countB = csv_dt.length - countA;
+        csv_data_A = csv_dt.splice(countB);
+        csv_data_B = csv_dt;        
+
         $('.page-loader').css('display', 'block');
-        for (i = 0 ; i < 50 ; i++){
-            FuncUnit('A');
-            FuncUnit('B');
+
+
+        // Start importing Campagin A
+        if (countA > Unit){
+            countA = countA - Unit;
+            FuncUnitA(0, Unit);
+        }else{
+            countA = 0;
+            FuncUnitA(0, csv_data_A.length);
+        }
+
+
+        // Start importing Campagin A
+        if (countB > Unit){
+            countB = countB - Unit;
+            FuncUnitB(0, Unit);
+        }else{
+            countB = 0;
+            FuncUnitB(0, csv_data_B.length);
         }
     });
 
@@ -274,7 +352,7 @@ $(function(){
         var val, name = $(this).attr('name');
         val = $(this).val();
 
-        if (name === 'Rate_A'){            
+        if (name === 'Rate_A'){
             $('input[name=Rate_B]').val( 100 - val );
         }else{
             $('input[name=Rate_A]').val( 100 - val );
