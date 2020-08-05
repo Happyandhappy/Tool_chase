@@ -1,16 +1,18 @@
 <?php
- 
 set_time_limit(300);
 session_start();
 require_once('config.php');
 
 $msg = "";
-
+$_SESSION['LoggedIn'] = true;
+header('Location: main.php');
+exit();
 // Checke User logged in status
 if (isset($_SESSION['LoggedIn'])) {
     header('Location: main.php');
     exit();
 }
+
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST'){

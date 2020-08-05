@@ -123,29 +123,33 @@
 		// initialize variables
 		$dialDups = 0;
 		$dialNonCallables = 0;
-		$duplicatesCheck = 2;
+		$duplicatesCheck = 1;
 
 		$type = $data['type'];
 		unset($data['type']);
 		if ($type == 'A'){
 			$api =  $GLOBALS['api1'];
 			$data['SecurityCode'] = SecurityCode_A;
-			$GroupId 	  = GroupID_A;
+			$groupid 	  = GroupID_A;
 		}else{
 			$api =  $GLOBALS['api2'];
 			$data['SecurityCode'] = SecurityCode_B;
-			$GroupId	  = GroupID_B;
+			$groupid	  = GroupID_B;
 		}
 
 		$subcampaign = $data['Subcampaign'];unset($data['Subcampaign']);
 		$campaign    = $data['Campaign'];   unset($data['Campaign']);
 
 
-		$result = $api->ImportData($data, $GroupId, $campaign, $subcampaign, $dialDups, $dialNonCallables, $duplicatesCheck);
-		if(!$result)
+		$result = $api->ImportData($data, $groupid, $campaign, $subcampaign, $dialDups, $dialNonCallables, $duplicatesCheck);
+
+		if($result == false){
 			$result = $api->GetLastError();
-		else
+		}
+		else{
+			echo "<br>";
 			$result = " OK";
+		}
 
 		echo $result;
 	}

@@ -1,7 +1,7 @@
 var csv_data_A=[], csv_data_B = [], csv_data = [];
 var dataTable ;
 var countA, countB, notified_A, notified_B, notified;
-var Unit = 1000;
+var Unit = 500;
 
 function AjaxRequest(data){
     return new Promise((resolve, reject) => {

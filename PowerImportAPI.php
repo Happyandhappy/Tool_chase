@@ -23,7 +23,7 @@ class PowerImportAPI
 
     private $server = "";
     private $error  = "";
-    private $response = "";
+    public $response = "";
 
 	public function __construct($ip)
     {
@@ -108,7 +108,6 @@ class PowerImportAPI
     private function SendData($data)
     {
 	    $ch = curl_init();
-
 	    curl_setopt($ch, CURLOPT_URL, $this->server."/CommandsProcessor.aspx?tm=".time());
 	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	    //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -123,7 +122,7 @@ class PowerImportAPI
 
         $info   = curl_getinfo($ch);
 	    curl_close($ch);
-
+        
         if($info["http_code"] != "200")
         {
         	$errnum = $info["http_code"];
